@@ -1,0 +1,8 @@
+this is second
+This is first line
+<<<<<<< HEAD
+this is fourth
+
+=======
+this is third
+>>>>>>> 7d23e74fb6ad7962c74faed4bf3d00474e315f20
