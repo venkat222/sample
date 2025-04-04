@@ -1,10 +1,48 @@
-this is second
-This is first line
-this is fourth
-this is third
-this is fifth
-dddddddddd
-yyyyyyyyyy
-gggggggggggggg
-kkkkkkkkkkkkkk
-fffffffffffffff
+# Import necessary modules
+from java.lang import System
+import sys
+
+# Check if the correct number of arguments is provided
+if len(sys.argv) < 3:
+    print("Usage: java weblogic.WLST update_multiple_db_passwords_single.py <newPassword> <dataSource1> <dataSource2> ...")
+    exit()
+
+# Define the WebLogic domain and server information
+adminUrl = 't3://abc.com:7010'  # Update with your Admin Server URL
+adminUser = 'weblogic'          # Update with your Admin username
+adminPassword = 'password'      # Update with your Admin password
+
+# Get the new password from the first argument
+new_password = sys.argv[1]
+
+# Get the list of data sources from the remaining arguments
+data_sources = sys.argv[2:]
+
+# Connect to the Admin Server
+connect(adminUser, adminPassword, adminUrl)
+
+# Iterate over each data source and update the password
+for data_source_name in data_sources:
+    try:
+        # Navigate to the Data Source
+        cd('/JDBCSystemResources/' + data_source_name + '/JDBCResource/' + data_source_name + '/JDBCDriverParams/' + data_source_name)
+        
+        # Update the password
+        set('PasswordEncrypted', new_password)
+        
+        # Save and activate changes for each data source
+        save()
+        activate()
+        
+        print('Password updated successfully for data source:', data_source_name)
+    except Exception as e:
+        print('Failed to update password for data source:', data_source_name, 'Error:', str(e))
+        undo('true', 'y')  # Undo changes if there's an error
+
+# Disconnect from the server
+disconnect()
+exit()
+
+# For Linux/Unix
+$ . $WL_HOME/server/bin/setWLSEnv.sh
+$ java weblogic.WLST update_multiple_db_passwords_single.py new_db_password myDataSource1 myDataSource2 myDataSource3
